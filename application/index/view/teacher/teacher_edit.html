@@ -1,0 +1,125 @@
+{extend name='public/base'/}
+{block name='header'}{/block} {//关掉头部}
+{block name='menu'}{/block} {//关掉菜单}
+{block name='seo'}
+<title>{$title|default="标题"}</title>
+<meta name="keywords" content="{$keywords|default='关键字'}">
+<meta name="description" content="{$desc|default='描述'}">
+{/block}
+
+{block name='content'}
+<article class="cl pd-20">
+
+
+	<form action="" method="post" class="form form-horizontal" id="form-grade-edit">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>姓名：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+
+				<input  type="text" class="input-text" value="{$teacher_info.name}" placeholder="" id="name" name="name">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">学位：</label>
+			<div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+				<select class="select" name="degree" size="1">
+					<option value="1" {if $teacher_info.degree==1} selected {/if}>专科</option>
+					<option value="2" {if $teacher_info.degree==2} selected {/if}>本科</option>
+					<option value="3" {if $teacher_info.degree==3} selected {/if}>研究生</option>
+					<option value="4" {if $teacher_info.degree==4} selected {/if}>博士</option>
+				</select>
+				</span>
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>毕业学校：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text" name="school" id="school" value="{$teacher_info.school}">
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3"><span class="c-red"></span>手机号：</label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" class="input-text "  placeholder="手机号" name="mobile" id="mobile" value="{$teacher_info.mobile}" >
+			</div>
+		</div>
+
+
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-3">启用状态：</label>
+			<div class="formControls col-xs-8 col-sm-9"> <span class="select-box" style="width:150px;">
+				<select class="select" name="status" size="1">
+					<option value="1" {if $teacher_info.status==1} selected {/if}>启用</option>
+					<option value="0" {if $teacher_info.status==0} selected {/if}>不启用</option>
+				</select>
+				</span>
+			</div>
+		</div>
+
+
+		<!--将当前记录的id做为隐藏域发送到服务器-->
+		<input type="hidden" value="{$teacher_info.id}" name="id">
+
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<input class="btn btn-primary radius disabled" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;" id="submit" >
+			</div>
+		</div>
+	</form>
+
+
+</article>
+{/block}
+
+{block name='js'}
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="__STATIC__/lib/jquery.validation/1.14.0/jquery.validate.js"></script> 
+<script type="text/javascript" src="__STATIC__/lib/jquery.validation/1.14.0/validate-methods.js"></script> 
+<script type="text/javascript" src="__STATIC__/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+
+
+
+
+<script>
+
+	$(function(){
+		//当用户修改了输入框内容时才触发
+	    $("form").children().change(function(){
+	        $("#submit").removeClass('disabled');
+		});
+
+
+		//ajax方式提交当前表单数据
+        $("#submit").on("click", function(event){
+            $.ajax({
+				type: "POST",
+				url: "{:url('teacher/editTeacherInfo')}",
+				data: $("#form-grade-edit").serialize(),
+				dataType: "json",
+				success: function(data){
+				    if (data.status == 1) {
+						layer.alert(data.message,function(index){
+                            window.parent.location.reload();
+                            parent.layer.close(index);
+                        });
+
+					} else {
+                        layer.alert(data.message);
+
+					}
+				}
+			});
+
+		})
+
+
+
+	})
+</script>
+{/block}
+
+</body>
+</html>
